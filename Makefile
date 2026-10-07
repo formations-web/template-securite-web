@@ -1,6 +1,7 @@
 CERT_NAME := caddy-root.crt
 CERT_SRC  := caddy:/data/caddy/pki/authorities/local/root.crt
 TMP_CERT  := /tmp/$(CERT_NAME)
+DOMAIN 	  := secuweb.local
 
 .PHONY: setup install_cert dev stop_dev sh cp_env  install_dependencies build_app
 
@@ -9,6 +10,7 @@ setup: cp_env
 	$(MAKE) install_cert
 	$(MAKE) install_dependencies
 	$(MAKE) build_app
+	$(MAKE) edit_host
 
 cp_env:
 	cp .env.example .env
@@ -21,6 +23,9 @@ stop:
 	
 dev:
 	docker compose --profile dev up -d
+
+edit_host:
+	sudo sh -c "grep -qF '127.0.0.1  secuweb.local' /etc/hosts || echo '127.0.0.1  secuweb.local' >> /etc/hosts"
 
 # Tente d'installer le certificat sur le poste
 install_cert:
